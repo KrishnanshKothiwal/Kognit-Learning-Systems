@@ -213,3 +213,14 @@ The following screenshots are included in the repository:
 - GitHub repository with branches and README
 
 
+## Repository Evolution
+
+This repository currently uses the rebuilt Kognit version on the `main` branch.
+
+The earlier version of Kognit has been preserved as a legacy snapshot on:
+
+- `legacy-kognit-snapshot`
+
+Note: the original detailed branch and commit history of the old version was not fully recoverable, so the earlier system is preserved as a snapshot rather than a complete historical timeline.
+
+
