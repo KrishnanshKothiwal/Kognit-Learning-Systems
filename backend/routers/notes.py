@@ -62,20 +62,24 @@ async def create_note_with_upload(
 ):
     content = ""
     file_content = await file.read()
-    
+
     # Determine file type and extract content
     if file.content_type == 'text/plain' or file.filename.endswith('.txt'):
-        content = file_content.decode('utf-8')
+        # Try UTF-8 first, fall back to latin-1 which accepts all byte values
+        try:
+            content = file_content.decode('utf-8')
+        except UnicodeDecodeError:
+            content = file_content.decode('latin-1')
     elif file.content_type == 'application/pdf' or file.filename.endswith('.pdf'):
         doc = fitz.open(stream=file_content, filetype="pdf")
         for page in doc:
             content += page.get_text()
         doc.close()
-    elif (file.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' or 
+    elif (file.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' or
           file.filename.endswith('.docx')):
         if not DOCX_AVAILABLE:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="DOCX support not available. Please install python-docx: pip install python-docx"
             )
         import io
@@ -85,9 +89,12 @@ async def create_note_with_upload(
             content += paragraph.text + "\n"
     else:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid file type. Please upload a .txt, .pdf, or .docx file."
         )
+
+    # Sanitize content: normalize to UTF-8 to prevent Windows charmap errors
+    content = content.encode('utf-8', errors='replace').decode('utf-8', errors='replace')
 
     # Create note immediately — return to client without waiting for AI
     note_data = NoteCreate(title=title, content=content)

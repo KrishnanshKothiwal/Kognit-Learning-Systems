@@ -82,16 +82,11 @@ def read_root():
 @app.get("/health")
 async def health_check():
     """Quick health check endpoint"""
+    from sqlalchemy import text
+    # ✅ Use get_db() dependency instead of raw SessionLocal
     try:
-        from database import SessionLocal
-        from sqlalchemy import text
-        db = SessionLocal()
-        try:
-            db.execute(text("SELECT 1"))
-            db.close()
-            return {"status": "healthy", "database": "connected"}
-        except Exception as db_error:
-            db.close()
-            return {"status": "healthy", "database": "disconnected", "error": str(db_error)}
-    except Exception as e:
-        return {"status": "healthy", "server": "running", "error": str(e)}
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return {"status": "healthy", "database": "connected"}
+    except Exception as db_error:
+        return {"status": "healthy", "database": "disconnected", "error": str(db_error)}
