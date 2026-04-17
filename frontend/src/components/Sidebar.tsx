@@ -28,8 +28,8 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 p-4 flex flex-col">
-      <h2 className="text-2xl font-bold text-emerald-400 mb-8">Kognit</h2>
+    <aside className="w-64 bg-card/50 backdrop-blur-md border-r border-border p-4 flex flex-col transition-colors duration-500">
+      <h2 className="text-2xl font-bold text-primary mb-8 tracking-tighter">Kognit</h2>
       <nav className="flex-grow">
         <ul className="space-y-2">
           {navItems.map((item) => (
@@ -37,9 +37,8 @@ export function Sidebar() {
               <Link href={item.href} passHref>
                 <Button
                   variant="ghost"
-                  className={`w-full justify-start text-lg px-4 py-2 ${
-                    pathname === item.href ? 'bg-slate-700 text-emerald-300' : 'text-slate-300 hover:bg-slate-800'
-                  }`}
+                  className={`w-full justify-start text-lg px-4 py-2 ${pathname === item.href ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-colors duration-300' : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-colors duration-300'
+                    }`}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   {item.label}
@@ -50,11 +49,11 @@ export function Sidebar() {
         </ul>
       </nav>
       {/* Logout Button */}
-      <div className="mt-auto pt-4 border-t border-slate-800">
+      <div className="mt-auto pt-4 border-t border-border">
         <Button
-          onClick={handleLogout} // Use the new handler
+          onClick={handleLogout} 
           variant="ghost"
-          className="w-full justify-start text-lg px-4 py-2 text-red-400 hover:bg-slate-800 hover:text-red-300"
+          className="w-full justify-start text-lg px-4 py-2 text-destructive/80 hover:bg-destructive/10 hover:text-destructive transition-colors duration-300"
         >
           <LogOut className="mr-3 h-5 w-5" />
           Logout

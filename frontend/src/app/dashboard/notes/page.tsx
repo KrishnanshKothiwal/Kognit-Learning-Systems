@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, UploadCloud, FileText, Search, ArrowUpNarrowWide, ArrowDownWideNarrow } from 'lucide-react';
-import Link from 'next/link';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { API_URL } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
@@ -24,6 +24,7 @@ interface Note {
 type SortBy = 'newest' | 'oldest' | 'title-asc' | 'title-desc';
 
 export default function NotesPage() {
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
   const [titleInput, setTitleInput] = useState(''); // Renamed to avoid conflict with 'title' state
@@ -158,26 +159,27 @@ export default function NotesPage() {
   return (
     <div className="flex h-[calc(100vh-80px)] overflow-hidden"> {/* Adjusted height to account for navbar/header */}
       {/* Left Column: Create Note Form */}
-      <Card className="w-1/3 min-w-[300px] max-w-[400px] bg-slate-800/50 border-slate-700 p-6 flex flex-col space-y-6 overflow-y-auto">
+      <Card className="w-1/3 min-w-[300px] max-w-[400px] card-sleek p-6 flex flex-col space-y-6 overflow-y-auto">
         <CardHeader className="p-0">
           <CardTitle className="text-2xl">Create New Note</CardTitle>
-          <CardDescription>Upload a .txt or .pdf file.</CardDescription>
+          <CardDescription className="text-muted-foreground">Upload a .txt or .pdf file.</CardDescription>
         </CardHeader>
         <CardContent className="p-0 flex-grow">
           <form onSubmit={handleCreateNote} className="space-y-5">
             <div>
-              <label htmlFor="note-title" className="block text-sm font-medium text-slate-300 mb-1">Note Title</label>
+              <label htmlFor="note-title" className="block text-sm font-medium text-foreground mb-1">Note Title</label>
               <Input
                 id="note-title"
                 placeholder="e.g., Photosynthesis Basics"
                 value={titleInput}
                 onChange={(e) => setTitleInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
                 required
-                className="bg-slate-900 border-slate-700 text-white"
+                className="input-sleek"
               />
             </div>
             <div>
-              <label htmlFor="note-file" className="block text-sm font-medium text-slate-300 mb-1">Upload File (.txt, .pdf, .docx)</label>
+              <label htmlFor="note-file" className="block text-sm font-medium text-foreground mb-1">Upload File (.txt, .pdf, .docx)</label>
               <Input
                 id="note-file"
                 type="file"
@@ -185,10 +187,10 @@ export default function NotesPage() {
                 onChange={(e) => e.target.files && setFile(e.target.files[0])}
                 accept=".txt,.pdf,.docx"
                 required
-                className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 bg-slate-900 border-slate-700 text-slate-400"
+                className="input-sleek file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30"
               />
             </div>
-            <Button type="submit" disabled={isLoading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+            <Button type="submit" disabled={isLoading} className="w-full btn-sleek bg-primary text-primary-foreground hover:bg-primary/90">
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UploadCloud className="mr-2 h-4 w-4" />}
               {isLoading ? 'Creating...' : 'Create Note'}
             </Button>
@@ -208,14 +210,14 @@ export default function NotesPage() {
                 placeholder="Search notes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 bg-slate-800 border-slate-700 text-white"
+                className="pl-8 input-sleek"
               />
             </div>
             <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-              <SelectTrigger className="w-[180px] bg-slate-800 border-slate-700 text-white">
+              <SelectTrigger className="w-[180px] input-sleek">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700 text-white">
+              <SelectContent className="bg-background border-border text-foreground">
                 <SelectItem value="newest">Newest First</SelectItem>
                 <SelectItem value="oldest">Oldest First</SelectItem>
                 <SelectItem value="title-asc">Title (A-Z)</SelectItem>
@@ -228,47 +230,71 @@ export default function NotesPage() {
         {filteredNotes.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredNotes.map((note) => (
-              <Card key={note.note_id} className="bg-slate-800/50 border-slate-700 hover:border-indigo-500 hover:shadow-lg transition-all duration-200 h-full flex flex-col">
-                <Link href={`/dashboard/notes/${note.note_id}`} passHref>
-                  <CardHeader className="cursor-pointer">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-indigo-400" />
-                        {note.title}
-                    </CardTitle>
-                    <CardDescription className="text-xs text-slate-500">
-                        {new Date(note.created_at).toLocaleDateString()}
-                    </CardDescription>
-                  </CardHeader>
-                </Link>
+              <Card key={note.note_id} className="card-sleek h-full flex flex-col">
+                <CardHeader
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => router.push(`/dashboard/notes/${note.note_id}`)}
+                >
+                  <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+                    <FileText className="h-5 w-5 text-primary" />
+                    {note.title}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground">
+                    {new Date(note.created_at).toLocaleDateString()}
+                  </CardDescription>
+                </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-slate-400 text-sm line-clamp-3">
-                    {note.summary || "AI summary not yet generated or available."}
+                  <p className="text-muted-foreground text-sm">
+                    Open note to view content and generate a summary.
                   </p>
                   <div className="mt-4 flex gap-3">
-                    <Button variant="outline" className="text-slate-200 border-slate-600 hover:text-white hover:bg-slate-700" onClick={async (e)=>{ e.preventDefault(); router.push(`/dashboard/notes/${note.note_id}`); }}>Open</Button>
-                    <Button variant="destructive" onClick={async (e)=>{
-                      e.preventDefault();
-                      if(!confirm('Delete this note?')) return;
-                      try {
-                        const headers = await getAuthHeaders();
-                        await axios.delete(`${API_URL}/notes/${note.note_id}`, { headers });
-                        setNotes(prev=>prev.filter(n=>n.note_id!==note.note_id));
-                      } catch(err){ console.error(err); }
-                    }}>Delete</Button>
+                    <Button
+                      variant="outline"
+                      className="text-foreground border-border/80 hover:bg-muted"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        router.push(`/dashboard/notes/${note.note_id}`);
+                      }}
+                    >
+                      Open
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      disabled={deletingId === note.note_id}
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!window.confirm('Are you sure you want to delete this note? This cannot be undone.')) return;
+                        setDeletingId(note.note_id);
+                        try {
+                          const headers = await getAuthHeaders();
+                          await axios.delete(`${API_URL}/notes/${note.note_id}`, { headers });
+                          setNotes(prev => prev.filter(n => n.note_id !== note.note_id));
+                        } catch (err) {
+                          console.error('Delete failed:', err);
+                          setError('Failed to delete note. Please try again.');
+                        } finally {
+                          setDeletingId(null);
+                        }
+                      }}
+                    >
+                      {deletingId === note.note_id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Delete'}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 border-2 border-dashed border-slate-700 rounded-lg bg-slate-900/20">
-            <UploadCloud className="mx-auto h-16 w-16 text-slate-600 mb-4" />
-            <h3 className="mt-2 text-xl font-semibold text-slate-300">No notes found</h3>
-            <p className="mt-1 text-md text-slate-500">
+          <div className="text-center py-20 border-2 border-dashed border-border rounded-lg bg-card/10">
+            <UploadCloud className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="mt-2 text-xl font-semibold text-foreground">No notes found</h3>
+            <p className="mt-1 text-md text-muted-foreground">
               {searchTerm ? "Try adjusting your search or filters." : "Get started by creating your first note using the form on the left!"}
             </p>
             {!searchTerm && (
-                <Button onClick={() => fileInputRef.current?.click()} className="mt-6 bg-indigo-600 hover:bg-indigo-700">
+                <Button onClick={() => fileInputRef.current?.click()} className="mt-6 bg-primary hover:bg-primary/90 text-primary-foreground btn-sleek">
                     <UploadCloud className="mr-2 h-4 w-4" /> Upload Note
                 </Button>
             )}

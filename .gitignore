@@ -1,12 +1,49 @@
+# ========================
 # Python
+# ========================
 venv/
+.venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
 
-# Node.js
+# pytest
+.pytest_cache/
+.coverage
+
+# ========================
+# Node.js (frontend)
+# ========================
 frontend/node_modules/
 frontend/.next/
+frontend/out/
+frontend/build/
 frontend/npm-debug.log
+frontend/yarn-error.log
 
-# Secrets
+# ========================
+# Environment / Secrets
+# ========================
 .env
+.env.*
+!.env.example
+
+# ========================
+# OS junk
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# IDE
+# ========================
+.vscode/
+.idea/
+
+# ========================
+# Docker
+# ========================
+docker-compose.override.yml

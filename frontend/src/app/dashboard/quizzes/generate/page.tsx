@@ -26,6 +26,15 @@ export default function GenerateQuizPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedLen = localStorage.getItem('defaultQuizLen');
+      if (savedLen) {
+        setNumQuestions(parseInt(savedLen, 10));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (!isLoadingAuth && !isLoggedIn) {
       router.replace('/login');
     }

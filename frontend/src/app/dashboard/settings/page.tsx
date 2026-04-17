@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { API_URL } from '@/lib/api';
@@ -11,10 +12,21 @@ import { getAuthToken } from '@/lib/auth-helper';
 export default function SettingsPage() {
   const [defaultQuizLen, setDefaultQuizLen] = useState<number>(5);
   const { isLoggedIn, logout, userEmail } = useAuth();
+  const { isLightMode, toggleTheme } = useTheme();
   const [email, setEmail] = useState<string>(userEmail || '');
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [msg, setMsg] = useState<string>('');
+  const [quizMsg, setQuizMsg] = useState<string>('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedLen = localStorage.getItem('defaultQuizLen');
+      if (savedLen) {
+        setDefaultQuizLen(parseInt(savedLen, 10));
+      }
+    }
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -69,7 +81,16 @@ export default function SettingsPage() {
             <label className="w-56 text-slate-300">Default number of questions</label>
             <input type="number" min={1} max={20} value={defaultQuizLen} onChange={(e)=>setDefaultQuizLen(parseInt(e.target.value||'5'))} className="w-24 bg-slate-700 border-slate-600 text-white rounded px-2 py-1"/>
           </div>
-          <Button disabled>Save (placeholder)</Button>
+          <div className="flex items-center gap-3">
+            <Button onClick={() => {
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('defaultQuizLen', defaultQuizLen.toString());
+                setQuizMsg('Saved!');
+                setTimeout(() => setQuizMsg(''), 3000);
+              }
+            }}>Save Settings</Button>
+            {quizMsg && <span className="text-green-400 text-sm">{quizMsg}</span>}
+          </div>
         </CardContent>
       </Card>
 
@@ -78,7 +99,9 @@ export default function SettingsPage() {
           <CardTitle>Appearance</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Button disabled>Toggle Theme (placeholder)</Button>
+          <Button onClick={toggleTheme} className={isLightMode ? "bg-slate-700 hover:bg-slate-600 text-white border border-slate-500" : ""}>
+            {isLightMode ? "Switch to Dark Mode" : "Switch to Light Mode"}
+          </Button>
         </CardContent>
       </Card>
     </div>

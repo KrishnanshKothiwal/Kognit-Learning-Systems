@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { PageTransition } from "@/components/PageTransition";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,11 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${GeistSans.className} ${inter.className}`}>
-        <AuthProvider> {/* AuthProvider should be the outermost wrapper for authentication */}
-          <PageTransition> {/* PageTransition wraps the actual page content */}
-            {children}
-          </PageTransition>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider> {/* AuthProvider should be the outermost wrapper for authentication */}
+            <PageTransition> {/* PageTransition wraps the actual page content */}
+              {children}
+            </PageTransition>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

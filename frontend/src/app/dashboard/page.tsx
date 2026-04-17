@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; // Added CardDescription
 import { BookOpen, BrainCircuit, Activity, Sparkles, Loader2, NotebookText } from 'lucide-react'; // Added NotebookText
 import Link from 'next/link';
-import { BarChart } from '@tremor/react';
+
 import { StatCard } from '@/components/ui/StatCard'; // Assuming this component exists
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { API_URL } from '@/lib/api';
+import { LineChart } from '@tremor/react';
 
 // --- Define data shapes ---
 interface Note {
@@ -106,7 +107,7 @@ export default function DashboardPage() {
       const allJournals = journalsRes.data || [];
       const total_entries = allJournals.length;
       const last_entry_date = total_entries > 0
-        ? allJournals.sort((a: { created_at: string | number | Date; },b: { created_at: string | number | Date; }) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0].created_at
+        ? allJournals.sort((a: { created_at: string | number | Date; }, b: { created_at: string | number | Date; }) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0].created_at
         : null;
       setJournalStats({ total_entries, last_entry_date });
 
@@ -115,7 +116,7 @@ export default function DashboardPage() {
       if (err.message === 'Request timeout') {
         setError('Request took too long. Please check your connection and try again.');
       } else {
-      setError('Failed to load dashboard data. Please try again. (Is the backend running?)');
+        setError('Failed to load dashboard data. Please try again. (Is the backend running?)');
       }
       if (axios.isAxiosError(err) && err.response?.status === 401) {
         logout();
@@ -174,7 +175,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Performance Summary Section */}
-      <Card className="bg-slate-800/50 border-slate-700 mb-6">
+      <Card className="card-sleek mb-6">
         <CardHeader>
           <CardTitle className="text-xl">Your Learning Overview</CardTitle>
           <CardDescription>
@@ -183,37 +184,37 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-slate-900/50 rounded-lg">
-              <p className="text-sm text-white mb-1">Learning Activity</p>
-              <p className="text-2xl font-bold text-white">
+            <div className="p-4 bg-muted/50 rounded-xl">
+              <p className="text-sm text-muted-foreground mb-1">Learning Activity</p>
+              <p className="text-2xl font-bold font-mono tracking-tighter text-primary">
                 {stats?.total_notes ? `${stats.total_notes} Notes` : '0 Notes'}
               </p>
-              <p className="text-xs text-white mt-1">
+              <p className="text-xs text-foreground mt-1">
                 {displayTotalJournalEntries > 0 ? `${displayTotalJournalEntries} Journal Entries` : 'No journal entries yet'}
               </p>
             </div>
-            <div className="p-4 bg-slate-900/50 rounded-lg">
-              <p className="text-sm text-white mb-1">Quiz Performance</p>
-              <p className="text-2xl font-bold text-white">
+            <div className="p-4 bg-muted/50 rounded-xl">
+              <p className="text-sm text-muted-foreground mb-1">Quiz Performance</p>
+              <p className="text-2xl font-bold font-mono tracking-tighter text-primary">
                 {stats?.quizzes_taken ? `${stats.quizzes_taken} Quizzes` : '0 Quizzes'}
               </p>
-              <p className="text-xs text-white mt-1">
-                {stats?.average_score !== null && stats?.average_score !== undefined 
-                  ? `Average: ${Number(stats.average_score).toFixed(0)}%` 
+              <p className="text-xs text-foreground mt-1">
+                {stats?.average_score !== null && stats?.average_score !== undefined
+                  ? `Average: ${Number(stats.average_score).toFixed(0)}%`
                   : 'No scores yet'}
               </p>
             </div>
-            <div className="p-4 bg-slate-900/50 rounded-lg">
-              <p className="text-sm text-white mb-1">Consistency</p>
-              <p className="text-2xl font-bold text-white">
+            <div className="p-4 bg-muted/50 rounded-xl">
+              <p className="text-sm text-muted-foreground mb-1">Consistency</p>
+              <p className="text-2xl font-bold text-primary">
                 {stats?.quizzes_taken && stats.quizzes_taken > 0 && stats?.average_score && stats.average_score >= 70
                   ? 'Great!'
                   : stats?.quizzes_taken && stats.quizzes_taken > 0
-                  ? 'Keep Going!'
-                  : 'Get Started!'}
+                    ? 'Keep Going!'
+                    : 'Get Started!'}
               </p>
-              <p className="text-xs text-white mt-1">
-                {quizHistory.length > 0 
+              <p className="text-xs text-foreground mt-1">
+                {quizHistory.length > 0
                   ? `${quizHistory.length} Recent Attempts`
                   : 'Take your first quiz'}
               </p>
@@ -247,8 +248,8 @@ export default function DashboardPage() {
           description={displayLastJournalEntryDate !== 'N/A' ? `Last entry: ${displayLastJournalEntryDate}` : 'No entries yet.'}
           icon={<NotebookText className="h-4 w-4 text-slate-400" />} // Using NotebookText icon
         />
-        
-        <Card className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+
+        <Card className="card-sleek bg-gradient-to-br from-primary/20 via-background to-background text-foreground">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm font-medium">
               <Sparkles className="h-4 w-4" /> Daily Nudge
@@ -260,34 +261,32 @@ export default function DashboardPage() {
         </Card>
 
         {/* Quiz History Chart */}
-        <Card className="bg-slate-800/50 border-slate-700 lg:col-span-2">
+        <Card className="card-sleek lg:col-span-2">
           <CardHeader>
             <CardTitle>Recent Quiz Performance</CardTitle>
           </CardHeader>
           <CardContent>
             {quizHistory.length > 0 ? (
-              <BarChart
-                className="mt-4 h-72"
-                data={quizHistory}
-                index="name"
-                categories={["score"]}
-                colors={["cyan"]} 
-                yAxisWidth={40}
-                valueFormatter={(number: number) => `${number}%`}
-                showAnimation={true}
-                animationDuration={1000}
-                showLegend={true}
-                showGridLines={true}
-                layout="vertical"
-              />
+              <div className="mt-4">
+                <LineChart
+                  className="h-72"
+                  data={quizHistory}
+                  index="name"
+                  categories={["score"]}
+                  colors={["indigo"]}
+                  yAxisWidth={40}
+                  valueFormatter={(number) => `${number}%`}
+                  showAnimation={true}
+                />
+              </div>
             ) : (
-              <p className="text-white text-sm h-72 flex items-center justify-center">Take a quiz to see your performance history.</p>
+              <p className="text-slate-400 text-sm h-32 flex items-center justify-center">Take a quiz to see your performance history.</p>
             )}
           </CardContent>
         </Card>
 
         {/* Recent Notes Widget */}
-        <Card className="bg-slate-800/50 border-slate-700 lg:col-span-2">
+        <Card className="card-sleek lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Notes</CardTitle>
             <Link href="/dashboard/notes">

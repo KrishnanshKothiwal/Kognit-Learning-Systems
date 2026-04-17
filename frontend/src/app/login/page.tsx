@@ -62,10 +62,10 @@ export default function LoginPage() {
 
   if (isLoadingAuth || isLoggedIn) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-900 text-white">
+      <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-indigo-400" />
-          <p className="text-lg text-slate-400">Loading...</p>
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-lg text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -74,21 +74,20 @@ export default function LoginPage() {
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex flex-col items-center justify-center bg-slate-950 p-8 text-center relative overflow-hidden">
+      <div className="hidden lg:flex flex-col items-center justify-center bg-card p-8 text-center relative overflow-hidden">
         <ParticleBackground />
         <div className="z-10 space-y-4">
-          <Image src="/images/logo.jpg" alt="Kognit Logo" width={80} height={80} className="mx-auto rounded-full" />
-          <h1 className="text-4xl font-bold text-slate-50">Welcome Back</h1>
-          <p className="text-slate-400 max-w-md">
+          <h1 className="text-4xl font-bold text-foreground">Welcome Back</h1>
+          <p className="text-muted-foreground max-w-md">
             Sign in to continue your journey and unlock your full academic potential.
           </p>
         </div>
       </div>
 
       {/* Right Side - Form */}
-      <div className="flex items-center justify-center py-12 bg-slate-900">
+      <div className="flex items-center justify-center py-12 bg-background">
         <div className="mx-auto grid w-[350px] gap-6">
-          <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
+          <Card className="card-sleek text-foreground border-border/80">
             <CardHeader>
               <CardTitle className="text-2xl">Login</CardTitle>
               <CardDescription>
@@ -111,7 +110,7 @@ export default function LoginPage() {
                 <div className="grid gap-2 relative">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    <Link href="#" className="ml-auto inline-block text-xs underline hover:text-indigo-400">
+                    <Link href="#" className="ml-auto inline-block text-xs underline hover:text-primary">
                       Forgot your password?
                     </Link>
                   </div>
@@ -122,12 +121,12 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-[38px] text-slate-400 hover:text-slate-200">
+                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-[38px] text-muted-foreground hover:text-foreground">
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:opacity-90 transition-opacity" disabled={isLoading}>
+                <Button type="submit" className="w-full btn-sleek bg-primary text-primary-foreground hover:bg-primary/90 transition-opacity" disabled={isLoading}>
                   {isLoading ? <Loader2 className="animate-spin" /> : 'Login'}
                 </Button>
               </form>
@@ -135,7 +134,7 @@ export default function LoginPage() {
             <CardFooter>
               <div className="mt-4 text-center text-sm">
                 Don't have an account?{' '}
-                <Link href="/signup" className="underline hover:text-indigo-400">
+                <Link href="/signup" className="underline hover:text-primary">
                   Sign up
                 </Link>
               </div>

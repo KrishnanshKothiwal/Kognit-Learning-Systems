@@ -103,10 +103,10 @@ export default function SignupPage() {
 
   if (isLoadingAuth || isLoggedIn) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-900 text-white">
+      <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-indigo-400" />
-          <p className="text-lg text-slate-400">Loading...</p>
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-lg text-muted-foreground">Loading...</p>
         </div>
       </div>
     );

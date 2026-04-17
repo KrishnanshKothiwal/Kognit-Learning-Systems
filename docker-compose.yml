@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_data:/app/data
+    env_file:
+      - .env.docker
+    environment:
+      - DATABASE_URL=sqlite:////app/data/edunudge.db
+    networks:
+      - kognit-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3009:3009"
+    env_file:
+      - .env.docker
+    depends_on:
+      - backend
+    networks:
+      - kognit-network
+
+volumes:
+  backend_data:
+
+networks:
+  kognit-network:
+    driver: bridge

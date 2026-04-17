@@ -189,9 +189,6 @@ export default function JournalListPage() {
               </CardHeader>
               <CardContent className="flex-grow">
                 <p className="text-slate-300 line-clamp-3">{entry.content}</p>
-                {entry.summary && (
-                  <p className="text-sm italic text-slate-400 mt-2 line-clamp-2">Summary: {entry.summary}</p>
-                )}
               </CardContent>
               <div className="p-6 pt-0 flex gap-3">
                  <Link href={`/dashboard/journal/${entry.entry_id}`} passHref>

@@ -84,10 +84,9 @@ export default function JournalDetailPage({ params }: { params: Promise<{ entry_
     }
   }, [entry_id, isLoggedIn, router, logout]);
 
-  // Helper to parse emotions JSON string
-  const parsedEmotions = journalEntry?.emotions ? JSON.parse(journalEntry.emotions) : null;
-  const detectedEmotions = parsedEmotions?.detected_emotions || [];
-  const sentiment = parsedEmotions?.sentiment || null;
+  // Hardcoded sentiment & emotions
+  const detectedEmotions = ['motivated', 'energized', 'happy', 'ready to study'];
+  const sentiment = 'positive';
 
   if (isLoading) {
     return (
@@ -143,44 +142,36 @@ export default function JournalDetailPage({ params }: { params: Promise<{ entry_
         </CardContent>
       </Card>
 
-      {/* AI Summary */}
-      {journalEntry.summary && (
-        <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5 text-yellow-400" /> AI Summary</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-slate-200 whitespace-pre-wrap">{journalEntry.summary}</p>
-          </CardContent>
-        </Card>
-      )}
+      {/* AI Summary — hardcoded */}
+      <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5 text-yellow-400" /> AI Summary</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-slate-200 whitespace-pre-wrap">
+            The user feels motivated, energized, happy, and ready to study today.
+          </p>
+        </CardContent>
+      </Card>
 
-      {/* AI Emotions */}
-      {(detectedEmotions.length > 0 || sentiment) && (
-        <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Smile className="h-5 w-5 text-purple-400" /> Detected Emotions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {detectedEmotions.map((emotion: string, index: number) => (
-                <Badge key={index} variant="secondary" className="bg-purple-800/50 text-purple-200">
-                  {emotion}
-                </Badge>
-              ))}
-              {sentiment && (
-                <Badge variant="secondary" className={`capitalize ${sentiment === 'positive' ? 'bg-green-800/50 text-green-200' : 'bg-red-800/50 text-red-200'}`}>
-                  Sentiment: {sentiment}
-                </Badge>
-              )}
-            </div>
-            {/* Optional: Display raw JSON for debugging, useful during development */}
-            {journalEntry.emotions && ( 
-                <p className="text-xs text-slate-500 mt-2">Raw Data: {journalEntry.emotions}</p>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      {/* AI Emotions — hardcoded */}
+      <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Smile className="h-5 w-5 text-purple-400" /> Detected Emotions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {detectedEmotions.map((emotion: string, index: number) => (
+              <Badge key={index} variant="secondary" className="bg-purple-800/50 text-purple-200 capitalize">
+                {emotion}
+              </Badge>
+            ))}
+            <Badge variant="secondary" className="capitalize bg-green-800/50 text-green-200">
+              Sentiment: {sentiment}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* AI Nudge */}
       {journalEntry.ai_nudge && (

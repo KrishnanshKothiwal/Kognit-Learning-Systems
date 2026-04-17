@@ -1,196 +1,226 @@
-# EduNudge: An AI-Powered Learning & Reflection Platform
+---
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/backend-FastAPI-05998b)](https://fastapi.tiangolo.com/)
-[![Next.js](https://img.shields.io/badge/frontend-Next.js-black.svg)](https://nextjs.org/)
+# Kognit
 
-A modern web application designed to enhance student learning through AI-powered note summarization, intelligent quiz generation, and personalized learning nudges. The platform combines study tools with reflective journaling to create a comprehensive learning experience.
+## Project Name & Overview
 
-## Table of Contents
+Kognit is an AI-powered learning and reflection platform designed to convert passive studying into an active, adaptive, and personalized learning process.
 
-- [About The Project](#about-the-project)
-- [Key Features](#key-features)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
-- [Future Enhancements](#future-enhancements)
+The platform integrates note ingestion, intelligent summarization, quiz generation, behavioral nudging, and reflective journaling into a single system. It creates a continuous feedback loop between learning, evaluation, and motivation, enabling students to improve retention, consistency, and academic performance.
 
-## About The Project
+---
 
-EduNudge is an intelligent learning platform that helps students:
-- Transform study notes into concise summaries and interactive quizzes
-- Track learning progress through a comprehensive dashboard
-- Maintain a reflective learning journal with AI-powered emotion analysis
-- Receive personalized motivation nudges based on learning patterns
-- Set and track academic goals with integrated calendar features
+## Problem It Solves
 
-## Key Features
+### 1. Passive Learning
 
-- **📝 Smart Notes Management**
-  - Upload documents (PDF, DOCX) or write notes directly
-  - AI-powered summarization and key point extraction
-  - Organize notes with tags and categories
+Most students consume content passively through reading or watching, which leads to low retention and poor recall. There is no built-in mechanism for active reinforcement.
 
-- **🧠 Intelligent Quiz Generation**
-  - Automatic quiz creation from notes
-  - Multiple choice and flashcard formats
-  - Performance tracking and analytics
+### 2. Lack of Personalization
 
-- **📅 Study Calendar**
-  - Schedule study sessions and deadlines
-  - Track learning goals and milestones
-  - Integrated with note-taking and quizzes
+Learning systems do not adapt to individual pace, strengths, weaknesses, or behavioral patterns. Every student receives the same static experience.
 
-- **✍️ Reflective Journal**
-  - Private journaling space
-  - AI emotion analysis for stress detection
-  - Personalized motivation nudges
+### 3. Motivation and Consistency Gap
 
-- **📊 Analytics Dashboard**
-  - Visual progress tracking
-  - Quiz performance analytics
-  - Study habit insights
+Students struggle with consistency despite having clear goals. There is no system to detect disengagement, stress, or declining performance and intervene appropriately.
 
-## Architecture
+### 4. Fragmented Tooling
 
-The application follows a modern three-tier architecture:
+Students rely on multiple disconnected tools:
 
-### Frontend (Presentation Layer)
-- Next.js 13+ with App Router
-- TypeScript for type safety
-- Tailwind CSS for styling
-- Shadcn UI components
-- Firebase Authentication
+* Notes in one platform
+* Quizzes in another
+* Calendar separately
+* No structured reflection
 
-### Backend (Business Layer)
-- FastAPI (Python 3.10+)
-- SQLAlchemy ORM
-- Pydantic for data validation
-- Google Gemini AI for intelligence features
-- JWT-based authentication
+This fragmentation prevents the creation of a unified learning feedback loop.
 
-### Database (Data Layer)
-- PostgreSQL for production
-- SQLite for development
-- Alembic for migrations
+---
 
-## Tech Stack
+## Target Users (Personas)
 
-### Frontend
-- Next.js 13+
-- TypeScript
-- Tailwind CSS
-- Tremor for analytics
-- Framer Motion for animations
+### 1. College Student (Primary)
 
-### Backend
-- FastAPI
-- SQLAlchemy
-- Pydantic
-- Google Gemini AI
-- VaderSentiment for emotion analysis
+* Prepares for exams, assignments, and placements
+* Needs structured revision and active recall
+* Struggles with consistency and time management
 
-### Database & Tools
-- PostgreSQL/SQLite
-- Alembic migrations
-- Firebase Auth
-- Docker (optional)
+### 2. Competitive Exam Aspirant
 
-## Getting Started
+* Studies large volumes of content over long durations
+* Requires high retention and frequent revision
+* Needs performance tracking and weak-area identification
+
+### 3. Self-Learner
+
+* Learns from online resources (YouTube, PDFs, courses)
+* Lacks structure and accountability
+* Needs guided learning and feedback
+
+---
+
+## Vision Statement
+
+To build an intelligent learning system that acts as a personalized cognitive layer for students, continuously adapting to how they learn, what they forget, and when they need intervention, ultimately maximizing retention, consistency, and performance.
+
+---
+
+## Key Features / Goals
+
+### 1. Intelligent Content Processing
+
+* Upload PDFs, DOCX, or raw notes
+* AI-generated summaries and key concepts
+* Structured knowledge extraction
+
+### 2. Automated Quiz Generation
+
+* Generate quizzes directly from notes
+* Support multiple formats (MCQs, flashcards)
+* Reinforce active recall
+
+### 3. Personalized Learning Loop
+
+* Track performance across quizzes and sessions
+* Identify weak areas and knowledge gaps
+* Adapt future content and quizzes accordingly
+
+### 4. Reflective Journaling with Analysis
+
+* Allow students to log learning experiences
+* Perform sentiment and stress analysis
+* Detect burnout or disengagement patterns
+
+### 5. Behavioral Nudging System
+
+* Send personalized reminders and motivation nudges
+* Trigger interventions based on inactivity or decline
+* Reinforce consistency and habit formation
+
+### 6. Study Planning and Tracking
+
+* Calendar-based scheduling
+* Goal setting and milestone tracking
+* Integration with learning tasks
+
+### 7. Analytics Dashboard
+
+* Track progress over time
+* Visualize performance trends
+* Provide actionable insights
+
+---
+
+## Success Metrics
+
+### Engagement Metrics
+
+* Daily Active Users (DAU)
+* Weekly retention rate
+* Average session duration
+
+### Learning Effectiveness
+
+* Quiz accuracy improvement over time
+* Reduction in repeated mistakes
+* Completion rate of study goals
+
+### Behavioral Metrics
+
+* Consistency (days active per week)
+* Drop-off rate after initial usage
+* Response rate to nudges
+
+### Product Metrics
+
+* Number of notes uploaded per user
+* Number of quizzes generated per user
+* Feature usage distribution
+
+---
+
+## Assumptions & Constraints
+
+### Assumptions
+
+* Students are willing to adopt AI-assisted learning tools
+* Active recall (quizzing) improves retention significantly
+* Behavioral nudges can improve consistency
+* Users will provide enough data (notes, interactions) for personalization
+
+### Constraints
+
+* Accuracy of AI-generated summaries and quizzes
+* Dependence on external AI APIs (e.g., Gemini)
+* Latency and cost constraints for real-time processing
+* Data privacy and secure handling of user content
+* Limited initial training data for personalization models
+
+---
+
+
+## Quick Start – Local Development
 
 ### Prerequisites
+- Docker Desktop installed
+- Git installed
 
-- Node.js 18+ (Frontend)
-- Python 3.10+ (Backend)
-- PostgreSQL (Production) or SQLite (Development)
+### Steps to Run
 
-### Backend Setup
+1. Clone the repository
+git clone <your-repo-link>
+cd kognit
 
-1. Clone the repository:
-\`\`\`bash
-git clone [repository-url]
-cd edunudge/backend
-\`\`\`
+2. Build Docker containers
+docker build -t kognit .
 
-2. Create and activate Python virtual environment:
-\`\`\`bash
-python -m venv venv
-\`\`\`
+3. Run the application
+docker run -p 3000:3000 kognit
 
-3. Install dependencies:
-\`\`\`bash
-pip install -r requirements.txt
-\`\`\`
+OR (if using docker-compose)
+docker-compose up --build
 
-4. Configure environment variables:
-Create a .env file in the backend directory:
-\`\`\`env
-DATABASE_URL=postgresql://user:password@localhost/edunudge_db
-SECRET_KEY=your_secret_key_here
-FRONTEND_URL=http://localhost:3009
-GEMINI_API_KEY=your_gemini_api_key_here
-\`\`\`
+4. Access the application
+http://localhost:3000
 
-5. Run migrations:
-\`\`\`bash
-alembic upgrade head
-\`\`\`
 
-6. Start the backend server:
-\`\`\`bash
-uvicorn main:app --reload --port 8000
-\`\`\`
+## Local Development Tools
 
-### Frontend Setup
+- Frontend: Next.js
+- Backend: FastAPI
+- Database: SQLite
+- Containerization: Docker
 
-1. Navigate to frontend directory:
-\`\`\`bash
-cd ../frontend
-\`\`\`
 
-2. Install dependencies:
-\`\`\`bash
-npm install
-\`\`\`
+## Branching Strategy
 
-3. Configure environment variables:
-Create .env.local:
-\`\`\`env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-\`\`\`
+This project follows GitHub Flow:
 
-4. Start development server:
-\`\`\`bash
-npm run dev
-\`\`\`
+- main → stable production-ready code
+- feature/* → new features and development work
+- Pull Requests are used to merge feature branches into main
 
-The application will be available at http://localhost:3009
+Example branch:
+feature/mvp-moscow-alignment
 
-## Future Enhancements
 
-1. **Advanced Study Tools**
-   - Spaced repetition system for flashcards
-   - Collaborative study groups
-   - Real-time document collaboration
+## Proof of Setup
 
-2. **Enhanced AI Features**
-   - Personalized study recommendations
-   - Advanced performance predictions
-   - Content difficulty analysis
+The following screenshots are included in the repository:
 
-3. **Integration & Export**
-   - Calendar sync with Google/Outlook
-   - Export notes to various formats
-   - Mobile app development
+- Docker build and run in terminal
+- Application running on localhost
+- GitHub repository with branches and README
 
-4. **Analytics & Insights**
-   - Advanced learning analytics
-   - Study pattern recommendations
-   - Progress prediction models
+
+## Repository Evolution
+
+This repository currently uses the rebuilt Kognit version on the `main` branch.
+
+The earlier version of Kognit has been preserved as a legacy snapshot on:
+
+- `legacy-kognit-snapshot`
+
+Note: the original detailed branch and commit history of the old version was not fully recoverable, so the earlier system is preserved as a snapshot rather than a complete historical timeline.
+
+

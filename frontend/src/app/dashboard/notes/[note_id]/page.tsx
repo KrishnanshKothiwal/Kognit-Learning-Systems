@@ -35,6 +35,7 @@ export default function NoteDetailPage({ params }: { params: Promise<{ note_id: 
   const [numQuestions, setNumQuestions] = useState<number>(5);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState<string>('');
@@ -42,6 +43,16 @@ export default function NoteDetailPage({ params }: { params: Promise<{ note_id: 
   const [isTranslating, setIsTranslating] = useState(false);
   const [targetLang, setTargetLang] = useState('fr');
   const [translatedText, setTranslatedText] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedLen = localStorage.getItem('defaultQuizLen');
+      if (savedLen) {
+        setNumQuestions(parseInt(savedLen, 10));
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (isLoadingAuth) return; // Wait for Firebase to initialize
     
@@ -119,6 +130,7 @@ export default function NoteDetailPage({ params }: { params: Promise<{ note_id: 
   const handleSummarize = async () => {
     if (!note) return;
     setIsSummarizing(true);
+    const startTime = Date.now();
     try {
       const authToken = await getAuthToken();
       if (!authToken) {
@@ -135,7 +147,15 @@ export default function NoteDetailPage({ params }: { params: Promise<{ note_id: 
       const refreshed = await axios.get(`${API_URL}/notes/${note_id}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
+
+      const elapsed = Date.now() - startTime;
+      const minWaitTime = 5500; // 5.5 seconds buffer
+      if (elapsed < minWaitTime) {
+        await new Promise(resolve => setTimeout(resolve, minWaitTime - elapsed));
+      }
+
       setNote(refreshed.data);
+      setShowSummary(true);
     } catch (e) {
       setError('Failed to summarize note.');
     } finally {
@@ -397,7 +417,7 @@ export default function NoteDetailPage({ params }: { params: Promise<{ note_id: 
         )}
       </CardContent>
     </Card>
-    {note.summary && (
+    {showSummary && note.summary && (
   <Card className="bg-slate-800/50 border-slate-700 text-slate-50 mt-6">
     <CardHeader>
       <CardTitle>AI Summary</CardTitle>

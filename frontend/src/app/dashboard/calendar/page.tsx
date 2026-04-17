@@ -201,10 +201,11 @@ export default function CalendarPage() {
 
   const getEventsForDay = (date: Date | null) => {
     if (!date) return [];
-    const dateStr = date.toISOString().split('T')[0];
     return events.filter(event => {
-      const eventDate = new Date(event.start_time).toISOString().split('T')[0];
-      return eventDate === dateStr;
+      const eventDate = new Date(event.start_time);
+      return eventDate.getFullYear() === date.getFullYear() &&
+             eventDate.getMonth() === date.getMonth() &&
+             eventDate.getDate() === date.getDate();
     });
   };
 
@@ -425,10 +426,14 @@ export default function CalendarPage() {
                                     : 'bg-blue-900/50 text-blue-300'
                             }`}
                             title={event.title}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               const eventTime = new Date(event.start_time);
                               const timeStr = eventTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                              alert(`${event.title}\n${timeStr}\n${event.description || 'No description'}`);
+                              const msg = `${event.title}\n${timeStr}\n${event.description || 'No description'}\n\nWould you like to delete this event?`;
+                              if (window.confirm(msg)) {
+                                handleDeleteEvent(event.event_id);
+                              }
                             }}
                           >
                             {event.is_completed && <CheckCircle2 className="inline h-3 w-3 mr-1" />}
