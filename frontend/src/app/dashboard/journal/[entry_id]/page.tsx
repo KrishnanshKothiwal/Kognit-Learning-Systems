@@ -1,4 +1,3 @@
-// frontend/src/app/dashboard/journal/[entry_id]/page.tsx
 'use client';
 
 import { useEffect, useState, use } from 'react';
@@ -17,17 +16,42 @@ interface JournalEntry {
   title: string | null;
   content: string;
   summary: string | null;
-  emotions: string | null; // This will be a JSON string from backend
+  emotions: string | null; // JSON string from backend, e.g. '{"emotions":["happy"],"sentiment":"positive"}'
   ai_nudge: string | null;
   created_at: string;
   updated_at: string;
   user_id: number;
 }
 
+interface ParsedEmotions {
+  emotions: string[];
+  sentiment: string;
+}
+
+function parseEmotions(raw: string | null): ParsedEmotions | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    // Support both shapes: { emotions: [...], sentiment: "..." } or just [...] 
+    if (Array.isArray(parsed)) {
+      return { emotions: parsed, sentiment: '' };
+    }
+    if (parsed.emotions || parsed.sentiment) {
+      return {
+        emotions: Array.isArray(parsed.emotions) ? parsed.emotions : [],
+        sentiment: parsed.sentiment ?? '',
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export default function JournalDetailPage({ params }: { params: Promise<{ entry_id: string }> | { entry_id: string } }) {
   const resolvedParams = typeof params === 'object' && 'then' in params ? use(params) : params;
   const entry_id = resolvedParams.entry_id;
-  
+
   const router = useRouter();
   const { isLoggedIn, logout } = useAuth();
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
@@ -76,17 +100,10 @@ export default function JournalDetailPage({ params }: { params: Promise<{ entry_
       }
     };
 
-    if (isLoggedIn) {
-      fetchJournalEntry();
-    } else {
-      setError('No authentication token found. Please log in again.');
-      setIsLoading(false);
-    }
+    fetchJournalEntry();
   }, [entry_id, isLoggedIn, router, logout]);
 
-  // Hardcoded sentiment & emotions
-  const detectedEmotions = ['motivated', 'energized', 'happy', 'ready to study'];
-  const sentiment = 'positive';
+  const parsedEmotions = journalEntry ? parseEmotions(journalEntry.emotions) : null;
 
   if (isLoading) {
     return (
@@ -124,13 +141,17 @@ export default function JournalDetailPage({ params }: { params: Promise<{ entry_
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-50">{journalEntry.title || `Journal Entry #${journalEntry.entry_id}`}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-50">
+          {journalEntry.title || `Journal Entry #${journalEntry.entry_id}`}
+        </h1>
       </div>
 
       {/* Original Entry Content */}
       <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><BookOpen className="h-5 w-5" /> Your Entry</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5" /> Your Entry
+          </CardTitle>
           <CardDescription className="text-sm text-slate-400">
             Written on: {new Date(journalEntry.created_at).toLocaleString()}
           </CardDescription>
@@ -142,42 +163,52 @@ export default function JournalDetailPage({ params }: { params: Promise<{ entry_
         </CardContent>
       </Card>
 
-      {/* AI Summary — hardcoded */}
-      <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5 text-yellow-400" /> AI Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-slate-200 whitespace-pre-wrap">
-            The user feels motivated, energized, happy, and ready to study today.
-          </p>
-        </CardContent>
-      </Card>
+      {/* AI Summary */}
+      {journalEntry.summary && (
+        <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="h-5 w-5 text-yellow-400" /> AI Summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-slate-200 whitespace-pre-wrap">{journalEntry.summary}</p>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* AI Emotions — hardcoded */}
-      <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Smile className="h-5 w-5 text-purple-400" /> Detected Emotions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {detectedEmotions.map((emotion: string, index: number) => (
-              <Badge key={index} variant="secondary" className="bg-purple-800/50 text-purple-200 capitalize">
-                {emotion}
-              </Badge>
-            ))}
-            <Badge variant="secondary" className="capitalize bg-green-800/50 text-green-200">
-              Sentiment: {sentiment}
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
+      {/* AI Emotions */}
+      {parsedEmotions && (parsedEmotions.emotions.length > 0 || parsedEmotions.sentiment) && (
+        <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Smile className="h-5 w-5 text-purple-400" /> Detected Emotions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {parsedEmotions.emotions.map((emotion: string, index: number) => (
+                <Badge key={index} variant="secondary" className="bg-purple-800/50 text-purple-200 capitalize">
+                  {emotion}
+                </Badge>
+              ))}
+              {parsedEmotions.sentiment && (
+                <Badge variant="secondary" className="capitalize bg-green-800/50 text-green-200">
+                  Sentiment: {parsedEmotions.sentiment}
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* AI Nudge */}
       {journalEntry.ai_nudge && (
         <Card className="bg-slate-800/50 border-slate-700 text-slate-50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5 text-orange-400" /> Personalized Nudge</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="h-5 w-5 text-orange-400" /> Personalized Nudge
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-lg italic text-slate-200 whitespace-pre-wrap">"{journalEntry.ai_nudge}"</p>
